@@ -1,75 +1,58 @@
 import './App.css';
 import React, {useState, useEffect} from 'react';
-
+import {getGeolocationInfo} from './Geolocation/geolocation';
+import { DisplaySalahTime } from './data/waterloo-masjid/displaySalah';
+// import {PlayAzzan} from './playAzan/playAzan.js';
 
 function App() {
   const[latLong, setLatLong] = useState({lat: 0, long: 0});
   const [inRange, setInRange] = useState({isIn: "", distance: 0});
-  let distanceToArduino = 0;
-
+  const[currentTime, setCurrentTime] = useState("");
   const arduinoPos={lat: 43.63671, long:-79.73283}
 
-  const toRad =(value)=>(value*Math.PI)/180.0;
-  const calculateDistance = (lat1, long1, lat2, long2) => {
-    //Converting all the latitudes and longitudes to radians
-    const earthRadiusMetres = 6371000;
-    const lat1Rad = toRad(lat1);
-    const lat2Rad = toRad(lat2);
-    const latRadDiff = toRad(lat2-lat1);
-    const longRadDiff = toRad(long2-long1);
+  const showCurrentTime = () => {
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = d.getMonth() + 1; // Months are zero-based, so add 1
+    const date = d.getDate();
+    const hours = d.getHours();
+    const minutes = d.getMinutes();
+    const seconds = d.getSeconds();
 
-    //Harvesine formula component
-    const a = Math.pow(Math.sin(latRadDiff/2),2) + Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.pow(Math.sin(longRadDiff/2),2);
-    //Angular distance in radians
-    const c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    // Format the date and time
+    const formattedDate = `${year}-${month < 10 ? '0' + month : month}-${date < 10 ? '0' + date : date}`;
+    const formattedTime = `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
 
-    const distance = earthRadiusMetres * c;
-    return distance;
- 
-  }
+    return `${formattedDate} ${formattedTime}`;
+  };
 
   //Refreshes every page refresh and displays the current location of the computer
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition((position) => {
-      console.log("The position is " + JSON.stringify(position, null, 2));
-      setLatLong({
-        lat:position.coords.latitude,
-        long:position.coords.longitude
-      })
+    getGeolocationInfo(setLatLong, setInRange);
 
+    const interval = setInterval(() => {
+      setCurrentTime(showCurrentTime());
+      // PlayAzzan();
+      console.log("The current time is " + showCurrentTime());
+    }, 1000);
+   
+  }, []);
 
-    distanceToArduino = calculateDistance(position.coords.latitude, position.coords.longitude, arduinoPos.lat, arduinoPos.long);
-    console.log("The distance is " + distanceToArduino + " metres");
-    
-    if(distanceToArduino<500){
-      setInRange({
-        isIn:"yes",
-        distance:distanceToArduino
-      })
-    }else{
-      setInRange({
-        isIn:"no",
-        distance:distanceToArduino
-      })
-    }
-  
-  })
-
-
-
-  },[]);
 
   console.log("The latLong is " + JSON.stringify(latLong, null, 2));
 
-
   return (
-    <div className="text-white h-screen flex items-center justify-center bg-slate-700">
+    <div className="border-2 text-white h-screen flex justify-center bg-slate-500 pt-4">
+      <div className="mr-10 mt-10 text-2xl">{showCurrentTime()}
+      </div>
       <header className="text-xl font-bold gap-3">
-        <p>The computer latitude is {latLong.lat}</p>
+        {/* <p>The computer latitude is {latLong.lat}</p>
         <p>The computer longitude is {latLong.long}</p>
         <p>The arduino longitude is {arduinoPos.lat}</p>
         <p>The arduino longitude is {arduinoPos.long}</p>
         <p>The arduino is within the computer range: {inRange.isIn} and the distance is {inRange.distance} meters.</p>
+       */}
+        <DisplaySalahTime/>
       </header>
     </div>
   );
