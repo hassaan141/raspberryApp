@@ -1,41 +1,42 @@
-// import React, {useState, useEffect} from "react";
-
-// export const PlayAzzan = () => {
-
-//     const time = [529, 647, 1207, 341, 526, 645 ]
-//     const azanAudio = new Audio("./azan.mp3");
-
-//     const getTime = () => {
-//         const d = new Date();
-//         const hours = d.getHours();
-//         const minutes = d.getMinutes();
-//         const currentTime = hours * 100 + minutes; 
-
-//         return hours+minutes;
-//     }
+import React, { useEffect, useState } from "react";
+import azanSound from './azan.mp3';
 
 
-//     useEffect(() => {
-//         // Function that runs every second to check the current time
-//         const interval = setInterval(() => {
-//           const currentTime = getTime();
-    
-//           // If the current time matches any of the prayer times, play the azan
-//           if (time.includes(currentTime)) {
-//             console.log("It is time to play the Azan");
-            
-//             // Play the audio only if it's not already playing
-//             if (azanAudio.paused) {
-//               azanAudio.play();
-//             }
-//           }
-//           console.log(currentTime);
-//         }, 1000);
+export const PlayAzan = ({ currentTime, isAudioEnabled }) => {
+    console.log("The current time is " + currentTime);
+  const time = [529, 647, 1207, 341, 526, 118]; // Set your prayer times here
+  const azanAudio = new Audio(azanSound);
+//   const [lastPlayedTime, setLastPlayedTime] = useState(null); 
 
-//         return () => clearInterval(interval);
-//         }, [time, azanAudio]);
+  useEffect(() => {
+    const checkTimeAndPlay = () => {
+    //   if (time.includes(currentTime) && isAudioEnabled && currentTime !== lastPlayedTime) {
+      if (time.includes(currentTime) && isAudioEnabled) {
+        console.log("It's time to play the Azan");
+        azanAudio.play().catch((error) => {
+          console.log("Autoplay failed, will retry on tab focus:", error);
+        });
+        // setLastPlayedTime(currentTime);
+      }else if (!isAudioEnabled) {
+        azanAudio.pause();
+        azanAudio.currentTime = 0; // Reset the audio to the beginning
+      }
+    };
 
-//     return (
-//         <div></div>
-//     );
-// }
+    checkTimeAndPlay();
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        checkTimeAndPlay();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [currentTime, isAudioEnabled]); 
+
+  return <div></div>;
+};

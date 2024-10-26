@@ -33,8 +33,8 @@ export const DisplaySalahTime = () => {
 
     return(
         <div className="relative overflow-x-auto shadow-lg sm:rounded-lg">
-        <h3 className="text-3xl font-semibold text-gray-200 dark:text-gray-100 border-2 flex justify-center align-center">Salah Times</h3>
-        <table className="w-full text-sm text-left rtl:text-right text-gray-700 dark:text-gray-300">
+        <h3 className="text-3xl font-semibold text-gray-200 dark:text-gray-100 flex justify-center align-center mb-2">Salah Times</h3>
+        <table className="w-full text-sm text-left rtl:text-right text-slate-700 dark:text-gray-300">
           <thead className="text-xs text-white uppercase bg-green-700 dark:bg-green-600 dark:text-white">
             <tr>
               <th className="px-6 py-3">Fajr</th>
@@ -46,7 +46,7 @@ export const DisplaySalahTime = () => {
             </tr>
           </thead>
           <tbody>
-            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+            <tr className="bg-white border-b dark:bg-gray-800 dark:hover:bg-gray-50 dark:hover:bg-gray-600">
               {azaan.map((time, index) => {
                 return (
                   <td key={index} className="px-6 py-4">
