@@ -14,7 +14,6 @@ export const PlayAzan = ({ currentTime, isAudioEnabled }) => {
       if (time.includes(currentTime) && isAudioEnabled) {
         console.log("It's time to play the Azan");
         azanAudio.play().catch((error) => {
-          console.log("Autoplay failed, will retry on tab focus:", error);
         });
         // setLastPlayedTime(currentTime);
       }else if (!isAudioEnabled) {
