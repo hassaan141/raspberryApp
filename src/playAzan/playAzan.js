@@ -1,41 +1,52 @@
 import React, { useEffect, useState } from "react";
-import azanSound from './azan.mp3';
+import azanSound from './azanFajr.mp3';
 
+export const PlayAzan = ({ currentTime }) => {
+    const timeInt = parseInt(currentTime);
+    console.log(timeInt);
+    const time = [529, 647, 1207, 341, 526, 1119]; // Set your prayer times here
+    const azanAudio = new Audio(azanSound);
+    const [isTime, setIsTime] = useState(false);
 
-export const PlayAzan = ({ currentTime, isAudioEnabled }) => {
-    console.log("The current time is " + currentTime);
-  const time = [529, 647, 1207, 341, 526, 118]; // Set your prayer times here
-  const azanAudio = new Audio(azanSound);
-//   const [lastPlayedTime, setLastPlayedTime] = useState(null); 
-
-  useEffect(() => {
-    const checkTimeAndPlay = () => {
-    //   if (time.includes(currentTime) && isAudioEnabled && currentTime !== lastPlayedTime) {
-      if (time.includes(currentTime) && isAudioEnabled) {
-        console.log("It's time to play the Azan");
+    const onPlayAzanClicked = () => {
         azanAudio.play().catch((error) => {
+            console.error("Autoplay failed:", error);
         });
-        // setLastPlayedTime(currentTime);
-      }else if (!isAudioEnabled) {
-        azanAudio.pause();
-        azanAudio.currentTime = 0; // Reset the audio to the beginning
-      }
+    };
+    const pauseAzan = () => {
+        azanAudio.pause()
+
     };
 
-    checkTimeAndPlay();
+    useEffect(() => {
+        if (time.includes(timeInt)) {
+            console.log("It's time to play the Azan");
+            setIsTime(true);
+        } else {
+            setIsTime(false);
+        }
+    }, [timeInt]);
 
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
-        checkTimeAndPlay();
-      }
-    };
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, [currentTime, isAudioEnabled]); 
-
-  return <div></div>;
+    return (
+        <div className="">
+            {isTime && 
+            <div>
+                <h6 className="flex align-center justify-center text-xl">It is prayer time</h6>
+                <button
+                    onClick={() => onPlayAzanClicked(true)}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md"
+                >
+                    Enable Azan Sound
+                </button>
+                <button
+                    onClick={() => pauseAzan()}
+                    className="bg-red-500 ml-4 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg shadow-md"
+                >
+                    Disable Azan Sound
+                </button>
+            </div>
+            }
+            
+        </div>
+    );
 };
