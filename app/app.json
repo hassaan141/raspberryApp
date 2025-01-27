@@ -3,10 +3,19 @@
     "name": "app",
     "slug": "app",
     "version": "1.0.0",
-    "platforms": [
-      "ios",
-      "android",
-      "web"
-    ]
+    "platforms": ["ios", "android", "web"],
+    "android": {
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION"
+      ]
+    },
+    "ios": {
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Your app needs access to your location to show nearby places.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Your app needs access to your location for continuous updates."
+      }
+    }
   }
 }

@@ -1,6 +1,6 @@
 import React from "react"
 import { View, Text, StyleSheet, Dimensions } from "react-native"
-import DetailedMaps from "../Components/detailedMap"
+import DetailedMaps from "../Components/Map/detailedMap"
 
 export const Maps = () => {
   return (
@@ -10,7 +10,7 @@ export const Maps = () => {
       </View>
       <View style={styles.mapContainer}>
         <DetailedMaps />
-      </View>
+      </View>     
     </View>
   )
 }

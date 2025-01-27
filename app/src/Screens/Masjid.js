@@ -1,21 +1,13 @@
-import React from "react"
+import React, {useState, useEffect} from "react"
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native"
 import { Feather } from "@expo/vector-icons"
-
-// Placeholder data for nearby masjids
-const nearbyMasjids = [
-  { id: "1", name: "Al-Iman Mosque", distance: "0.5 km", address: "123 Main St" },
-  { id: "2", name: "Islamic Center", distance: "1.2 km", address: "456 Oak Ave" },
-  { id: "3", name: "Masjid Al-Noor", distance: "2.3 km", address: "789 Elm St" },
-  { id: "4", name: "Al-Falah Mosque", distance: "3.1 km", address: "101 Pine Rd" },
-  { id: "5", name: "Al-Huda Islamic Center", distance: "3.8 km", address: "202 Cedar Ln" },
-]
+import { fetchNearbyMasjids } from "../Supabase/fetchMasjidList"
 
 export const MasjidItem = ({ item }) => (
   <TouchableOpacity style={styles.masjidItem}>
     <View style={styles.masjidInfo}>
-      <Text style={styles.masjidName}>{item.name}</Text>
-      <Text style={styles.masjidAddress}>{item.address}</Text>
+      <Text style={styles.masjidName}>{item.Name}</Text>
+      <Text style={styles.masjidAddress}>{item.Address}</Text>
     </View>
     <View style={styles.masjidDistance}>
       <Feather name="map-pin" size={16} color="#718096" style={styles.icon} />
@@ -25,6 +17,28 @@ export const MasjidItem = ({ item }) => (
 )
 
 export const Masjids = () => {
+
+  const [nearbyMasjids, setNearbyMasjids] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {  
+    const loadMasid = async () => {
+      try {
+        const ten_masjid_list = await fetchNearbyMasjids()
+        console.log("masjid list", ten_masjid_list)
+        setNearbyMasjids(ten_masjid_list)
+      } catch (err) {
+        console.error("Error loading masjids:", err)
+        setError("Failed to fetch masjids. Please try again later.")
+      } finally {
+        setLoading(false)
+      }
+    }
+  
+    loadMasid()
+  }, [])
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
